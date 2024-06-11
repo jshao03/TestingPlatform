@@ -504,3 +504,4 @@
 /Users/zhou/Documents/projects/TodoApi/backend/obj/Debug/net8.0/TodoApi.pdb
 /Users/zhou/Documents/projects/TodoApi/backend/obj/Debug/net8.0/TodoApi.genruntimeconfig.cache
 /Users/zhou/Documents/projects/TodoApi/backend/obj/Debug/net8.0/ref/TodoApi.dll
+/Users/zhou/Documents/projects/TodoApi/backend/obj/Debug/net8.0/TodoApi.sourcelink.json
