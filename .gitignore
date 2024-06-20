@@ -451,3 +451,5 @@ yarn.lock
 
 # TypeScript specific
 *.tsbuildinfo
+backend/Data/graph.txt
+backend/Data/nodes.txt
