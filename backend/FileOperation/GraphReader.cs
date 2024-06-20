@@ -2,7 +2,7 @@ namespace TodoApi.FileOperation;
 
 public static class GraphReader
 {
-    public static IReadOnlyList<string> ReadGraphTxt(string path)
+    public static IReadOnlyList<string> TxtLineReader(string path)
     {
         try
         {

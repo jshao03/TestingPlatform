@@ -2,5 +2,6 @@ namespace TodoApi.ShortestPathAlgos;
 
 public interface IReadOnlyGraph
 {
-    EdgeMetrics[][] Graph { get; }
+    public IReadOnlyList<Node> Nodes { get; }
+    public int[][] Graph { get; }
 }

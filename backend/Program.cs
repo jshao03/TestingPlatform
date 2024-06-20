@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using TodoApi.Builders;
 using TodoApi.Models;
 
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -21,6 +22,9 @@ builder.Services.AddDbContext<TodoContext>(opt =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var graph = GraphBuilder.Build();
+builder.Services.AddSingleton(graph);
 
 var app = builder.Build();
 

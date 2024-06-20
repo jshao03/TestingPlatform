@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using TodoApi.ForClient;
 using TodoApi.ShortestPathAlgos;
 
 namespace TodoApi.Controllers
@@ -7,10 +10,26 @@ namespace TodoApi.Controllers
     [ApiController]
     public class DijkstraController : ControllerBase
     {
-        [HttpGet]
-        public string Get(IReadOnlyGraph graph)
+        [HttpGet("GetNodes")]
+        public IActionResult Get(IReadOnlyGraph graph)
         {
-            return "Hello from API!";
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy
+                    {
+                        ProcessDictionaryKeys = true,
+                        OverrideSpecifiedNames = true
+                    }
+                },
+                Formatting = Formatting.Indented
+            };
+
+            var result = new ForClientGraph(graph.Nodes, graph.Graph);
+            var jsonResult = JsonConvert.SerializeObject(result, settings);
+
+            return Ok(jsonResult);
         }
     }
 }
