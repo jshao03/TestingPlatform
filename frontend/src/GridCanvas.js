@@ -5,14 +5,24 @@ import React, { useEffect, useRef } from 'react';
 const GridCanvas = ({ nodesData, linesData }) => {
     const canvasRef = useRef(null);
 
+    const CoordinateConversion = (value, adjustment, multiplier) => {
+        // Validate inputs
+        if (isNaN(value) || isNaN(adjustment) || isNaN(multiplier)) {
+            console.error(`Invalid input to CoordinateConversion: value=${value}, adjustment=${adjustment}, multiplier=${multiplier}`);
+            return 0;
+        }
+        
+        return (value + adjustment) * multiplier;
+    };
+
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
         const drawGrid = () => {
-            const cellSize = 20;
             const width = canvas.width;
             const height = canvas.height;
+            const marginSize = 30;
 
             // Clear canvas
             context.clearRect(0, 0, width, height);
@@ -31,12 +41,24 @@ const GridCanvas = ({ nodesData, linesData }) => {
             // context.stroke();
 
             if (nodesData && linesData) {
+                // Find minimum x and y values
+                const minLat = Math.min(...nodesData.map(node => node.location.lat));
+                const maxLat = Math.max(...nodesData.map(node => node.location.lat));
+                const minLng = Math.min(...nodesData.map(node => node.location.lng));
+                const maxLng = Math.max(...nodesData.map(node => node.location.lng));
+                const latRange = maxLat - minLat;
+                const lngRange = maxLng - minLng;
+                const latAdjustment = minLat >= 0 ? 0 : marginSize - minLat;
+                const lngAdjustment = minLng >= 0 ? 0 : marginSize - minLng;
+                const latMultiplier = (width - 2 * marginSize) / (maxLat + latAdjustment);
+                const lngMultiplier = (height - 2 * marginSize) / (maxLng + lngAdjustment);
+                
                 // Draw points from nodesData
                 context.fillStyle = 'red'; // Example color for points
                 const radius = 5; // Radius of the points
                 nodesData.forEach(point => {
-                    const x = point.location.lat;
-                    const y = point.location.lng;
+                    const x = CoordinateConversion(point.location.lat, latAdjustment, latMultiplier);
+                    const y = CoordinateConversion(point.location.lng, lngAdjustment, lngMultiplier);
                     const fontSize = 18; // Font size for labels
                     context.font = `${fontSize}px Arial`; // Font style for labels
 
@@ -55,14 +77,14 @@ const GridCanvas = ({ nodesData, linesData }) => {
                 context.strokeStyle = 'blue'; // Example color for lines
                 context.lineWidth = 2; // Example line width
                 context.fillStyle = 'blue'; // Arrow color
-                
+
                 linesData.forEach((row, rowIndex) => {
                     row.forEach((element, colIndex) => {
                         if (element !== 0) {
-                            const startX = nodesData[rowIndex].location.lat;
-                            const startY = nodesData[rowIndex].location.lng;
-                            const endX = nodesData[colIndex].location.lat;
-                            const endY = nodesData[colIndex].location.lng;
+                            const startX = CoordinateConversion(nodesData[rowIndex].location.lat, latAdjustment, latMultiplier);
+                            const startY = CoordinateConversion(nodesData[rowIndex].location.lng, lngAdjustment, lngMultiplier);
+                            const endX = CoordinateConversion(nodesData[colIndex].location.lat, latAdjustment, latMultiplier);
+                            const endY = CoordinateConversion(nodesData[colIndex].location.lng, lngAdjustment, lngMultiplier);
 
                             // Calculate angle and arrow points
                             const angle = Math.atan2(endY - startY, endX - startX);
@@ -91,7 +113,7 @@ const GridCanvas = ({ nodesData, linesData }) => {
         drawGrid();
     }, [nodesData, linesData]);
 
-    return <canvas ref={canvasRef} width={800} height={600} style={{ border: '1px solid #000' }} />;
+    return <canvas ref={canvasRef} width={2000} height={600} style={{ border: '1px solid #000' }} />;
 };
 
 export default GridCanvas;
