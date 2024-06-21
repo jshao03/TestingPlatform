@@ -453,3 +453,5 @@ yarn.lock
 *.tsbuildinfo
 backend/Data/graph.txt
 backend/Data/nodes.txt
+
+*.txt
