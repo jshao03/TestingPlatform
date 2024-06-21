@@ -1,9 +1,10 @@
 // src/GridCanvas.js
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const GridCanvas = ({ nodesData, linesData }) => {
     const canvasRef = useRef(null);
+    const [scale, setScale] = useState(1); // Initial scale factor
 
     const CoordinateConversion = (value, adjustment, multiplier) => {
         // Validate inputs
@@ -15,11 +16,11 @@ const GridCanvas = ({ nodesData, linesData }) => {
         return (value + adjustment) * multiplier;
     };
 
-    const DrawGraph = (canvas, context,marginSize) => {
+    const DrawGraph = (canvas, context, marginSize) => {
         if (nodesData && linesData) {
             const width = canvas.width;
             const height = canvas.height;
-            
+
             // Find minimum x and y values
             const minLat = Math.min(...nodesData.map(node => node.location.lat));
             const maxLat = Math.max(...nodesData.map(node => node.location.lat));
@@ -90,12 +91,35 @@ const GridCanvas = ({ nodesData, linesData }) => {
     useEffect(() => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
-        var marginSize = 30;
+        const marginSize = 30;
+
+        // Adjust scale
+        context.setTransform(scale, 0, 0, scale, 0, 0);
 
         DrawGraph(canvas, context, marginSize);
-    }, [nodesData, linesData]);
+    }, [nodesData, linesData, scale]);
 
-    return <canvas ref={canvasRef} width={2000} height={600} style={{ border: '1px solid #000' }} />;
+    // Handle zoom with percentage bar
+    const handleZoomChange = (e) => {
+        const newScale = parseFloat(e.target.value) / 100; // Convert percentage to scale factor
+        setScale(newScale);
+    };
+
+    return (
+        <div>
+            <canvas ref={canvasRef} width={2000} height={600} style={{ border: '1px solid #000' }} />
+            <div>
+                <input
+                    type="range"
+                    min="10"
+                    max="200"
+                    value={scale * 100}
+                    onChange={handleZoomChange}
+                />
+                <span>{`${Math.round(scale * 100)}%`}</span>
+            </div>
+        </div>
+    );
 };
 
 export default GridCanvas;
