@@ -31,6 +31,12 @@ const GridCanvas = ({ nodesData, linesData }) => {
             const latMultiplier = (width - 2 * marginSize) / (maxLat + latAdjustment);
             const lngMultiplier = (height - 2 * marginSize) / (maxLng + lngAdjustment);
             
+            // Clear canvas
+            context.clearRect(0, 0, width, height);
+
+            // Adjust scale
+            context.setTransform(scale, 0, 0, scale, 0, 0);
+
             // Draw points from nodesData
             context.fillStyle = 'red'; // Example color for points
             const radius = 5; // Radius of the points
@@ -92,9 +98,6 @@ const GridCanvas = ({ nodesData, linesData }) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
         const marginSize = 30;
-
-        // Adjust scale
-        context.setTransform(scale, 0, 0, scale, 0, 0);
 
         DrawGraph(canvas, context, marginSize);
     }, [nodesData, linesData, scale]);
